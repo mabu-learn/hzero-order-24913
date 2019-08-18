@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hzero.order.infra.mapper.HodrSoHeaderMapper">
+
+    <select id="queryOrderByCondition"
+            resultType="com.hzero.order.api.dto.OrderSelectPO"
+            parameterType="com.hzero.order.api.dto.OrderSelectPO">
+        SELECT order_number , company_name , customer_name ,order_date ,order_status ,order_quantity*unit_selling_price as totalprice
+        FROM hodr_so_header as hsh,hodr_so_line as hsl,hodr_company as hcp,hodr_customer hct,hodr_item as hi
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="companyName != null">
+                AND hcp.company_id = (SELECT company_id from hodr_company WHERE company_name = #{companyName})
+            </if>
+
+            <if test="customerName != null">
+                AND hct.customer_id = (SELECT customer_id FROM hodr_customer WHERE customer_name = #{customerName})
+            </if>
+
+            <if test="orderNumber != null">
+                AND hsh.order_number = #{orderNumber}
+            </if>
+
+            <if test="itemDescription != null">
+                AND hi.item_id = (SELECT item_id FROM hodr_item WHERE item_description = #{itemDescription})
+                AND hi.item_id = hsl.item_id
+            </if>
+
+            <if test="orderStatus != null">
+                AND hsh.order_status = #{orderStatus}
+            </if>
+
+                AND hsh.company_id = hcp.company_id
+
+                AND hsh.so_header_id = hsl.so_header_id;
+        </trim>
+    </select>
+
+
+    <select id="queryCompanyByNumberOrName"
+            resultType="com.hzero.order.domain.entity.HodrCompany">
+        SELECT * FROM hodr_company
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="companyNumber != null and companyNumber != ''">
+                AND  company_number = #{companyNumber}
+            </if>
+
+            <if test="companyName != null and and companyName != ''">
+                AND  company_number = #{companyName}
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryCustomerByNumberOrName"
+            resultType="com.hzero.order.domain.entity.HodrCustomer">
+        SELECT * FROM hodr_customer
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="customerNumber != null and customerNumber != ''">
+                AND  customer_number = #{customerNumber}
+            </if>
+
+            <if test="customerName != null and customerName != ''">
+                AND  customer_name = #{customerName}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

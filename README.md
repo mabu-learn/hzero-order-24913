@@ -12,5 +12,7 @@
 本项目启动类：hzero-order-24913 hzero-order-24913\src\main\java\com\hzero\order\HzeroOrder24913Application.java
 
 数据库初始化： 
+
        1.新建数据库：hzero-order
+       
        2.导入数据：运行sql文件
